@@ -1,0 +1,32 @@
+{
+  // TS config for Node.js app (ESM)
+  "compilerOptions": {
+    /* File Layout */
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    /* Environment */
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext", "DOM"],
+    "types": ["node"], // <— penting untuk console, fs, process, dll
+
+    /* Build Outputs */
+    "sourceMap": false,
+    "declaration": false,
+    "declarationMap": false,
+
+    /* Type Safety */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Module & Style */
+    "verbatimModuleSyntax": true,
+    "isolatedModules": false,
+    "skipLibCheck": true
+    // (hapus dulu "noUncheckedSideEffectImports" sampai TS-mu versi terbaru)
+  }
+}
