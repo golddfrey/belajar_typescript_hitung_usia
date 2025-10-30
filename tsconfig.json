@@ -28,5 +28,7 @@
     "isolatedModules": false,
     "skipLibCheck": true
     // (hapus dulu "noUncheckedSideEffectImports" sampai TS-mu versi terbaru)
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "test", "**/*.test.ts"]
 }
