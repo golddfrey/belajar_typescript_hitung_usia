@@ -16,3 +16,8 @@ pnpm-debug.log*
 .idea/
 # Misc
 .DS_Store
+# --- keep built assets for GitHub Pages ---
+!dist/
+!dist/**/*.css
+!dist/**/*.js
+
