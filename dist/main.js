@@ -1,3 +1,4 @@
+// src/main.ts
 const input = document.getElementById("tanggal-lahir");
 const hasil = document.getElementById("hasil");
 function formatAge(from, to) {
@@ -5,9 +6,8 @@ function formatAge(from, to) {
     let months = to.getMonth() - from.getMonth();
     let days = to.getDate() - from.getDate();
     if (days < 0) {
-        // pinjam hari dari bulan sebelumnya
-        const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
-        days += prevMonth;
+        const daysInPrevMonth = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
+        days += daysInPrevMonth;
         months -= 1;
     }
     if (months < 0) {
@@ -20,12 +20,13 @@ function show(text) {
     if (!hasil)
         return;
     hasil.textContent = text;
-    // tampilkan dengan mulus: hapus opacity-0 kalau ada
     hasil.classList.remove("opacity-0");
     hasil.classList.add("opacity-100");
 }
 function handleChange() {
-    if (!input || !input.value) {
+    if (!input)
+        return;
+    if (!input.value) {
         show("Silakan pilih tanggal lahir.");
         return;
     }
@@ -36,19 +37,24 @@ function handleChange() {
     }
     const now = new Date();
     if (birth > now) {
-        show("Hei waktu-waktu: tanggal lahir tidak boleh di masa depan.");
+        show("Tanggal lahir tidak boleh di masa depan.");
         return;
     }
     const { years, months, days } = formatAge(birth, now);
     show(`Usiamu: ${years} tahun, ${months} bulan, ${days} hari.`);
 }
-// pastikan elemen ada, lalu pasang event
+// Pastikan event terpasang setelah DOM siap
+function init() {
+    input?.addEventListener("change", handleChange);
+    input?.addEventListener("input", handleChange);
+    // Jika sudah ada nilai (mis. browser mengingat), langsung hitung
+    if (input?.value)
+        handleChange();
+}
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-        input?.addEventListener("change", handleChange);
-    });
+    document.addEventListener("DOMContentLoaded", init);
 }
 else {
-    input?.addEventListener("change", handleChange);
+    init();
 }
 export {};

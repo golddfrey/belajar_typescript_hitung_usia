@@ -1,3 +1,4 @@
+// src/main.ts
 const input = document.getElementById(
   "tanggal-lahir"
 ) as HTMLInputElement | null;
@@ -9,9 +10,12 @@ function formatAge(from: Date, to: Date) {
   let days = to.getDate() - from.getDate();
 
   if (days < 0) {
-    // pinjam hari dari bulan sebelumnya
-    const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
-    days += prevMonth;
+    const daysInPrevMonth = new Date(
+      to.getFullYear(),
+      to.getMonth(),
+      0
+    ).getDate();
+    days += daysInPrevMonth;
     months -= 1;
   }
   if (months < 0) {
@@ -24,13 +28,13 @@ function formatAge(from: Date, to: Date) {
 function show(text: string) {
   if (!hasil) return;
   hasil.textContent = text;
-  // tampilkan dengan mulus: hapus opacity-0 kalau ada
   hasil.classList.remove("opacity-0");
   hasil.classList.add("opacity-100");
 }
 
 function handleChange() {
-  if (!input || !input.value) {
+  if (!input) return;
+  if (!input.value) {
     show("Silakan pilih tanggal lahir.");
     return;
   }
@@ -41,18 +45,23 @@ function handleChange() {
   }
   const now = new Date();
   if (birth > now) {
-    show("Hei waktu-waktu: tanggal lahir tidak boleh di masa depan.");
+    show("Tanggal lahir tidak boleh di masa depan.");
     return;
   }
   const { years, months, days } = formatAge(birth, now);
   show(`Usiamu: ${years} tahun, ${months} bulan, ${days} hari.`);
 }
 
-// pastikan elemen ada, lalu pasang event
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    input?.addEventListener("change", handleChange);
-  });
-} else {
+// Pastikan event terpasang setelah DOM siap
+function init() {
   input?.addEventListener("change", handleChange);
+  input?.addEventListener("input", handleChange);
+  // Jika sudah ada nilai (mis. browser mengingat), langsung hitung
+  if (input?.value) handleChange();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
 }
