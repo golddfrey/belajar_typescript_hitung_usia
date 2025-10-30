@@ -1,6 +1,12 @@
-// src/main.ts
-const input = document.getElementById("tanggal-lahir");
-const hasil = document.getElementById("hasil");
+console.log("[main] script loaded");
+function $(id) {
+    const el = document.getElementById(id);
+    if (!el)
+        console.error(`[main] element #${id} NOT FOUND`);
+    return el;
+}
+const input = $("tanggal-lahir");
+const hasil = $("hasil");
 function formatAge(from, to) {
     let years = to.getFullYear() - from.getFullYear();
     let months = to.getMonth() - from.getMonth();
@@ -19,39 +25,54 @@ function formatAge(from, to) {
 function show(text) {
     if (!hasil)
         return;
+    console.log("[main] show ->", text);
     hasil.textContent = text;
     hasil.classList.remove("opacity-0");
     hasil.classList.add("opacity-100");
 }
 function handleChange() {
-    if (!input)
-        return;
-    if (!input.value) {
-        show("Silakan pilih tanggal lahir.");
-        return;
+    try {
+        console.log("[main] handleChange fired");
+        if (!input) {
+            console.error("[main] input is null");
+            return;
+        }
+        if (!input.value) {
+            show("Silakan pilih tanggal lahir.");
+            return;
+        }
+        const birth = new Date(input.value);
+        if (isNaN(birth.getTime())) {
+            show("Tanggal tidak valid.");
+            return;
+        }
+        const now = new Date();
+        if (birth > now) {
+            show("Tanggal lahir tidak boleh di masa depan.");
+            return;
+        }
+        const { years, months, days } = formatAge(birth, now);
+        show(`Usiamu: ${years} tahun, ${months} bulan, ${days} hari.`);
     }
-    const birth = new Date(input.value);
-    if (isNaN(birth.getTime())) {
-        show("Tanggal tidak valid.");
-        return;
+    catch (e) {
+        console.error("[main] error in handleChange:", e);
+        show("Terjadi kesalahan tak terduga.");
     }
-    const now = new Date();
-    if (birth > now) {
-        show("Tanggal lahir tidak boleh di masa depan.");
-        return;
-    }
-    const { years, months, days } = formatAge(birth, now);
-    show(`Usiamu: ${years} tahun, ${months} bulan, ${days} hari.`);
 }
-// Pastikan event terpasang setelah DOM siap
 function init() {
-    input?.addEventListener("change", handleChange);
-    input?.addEventListener("input", handleChange);
-    // Jika sudah ada nilai (mis. browser mengingat), langsung hitung
-    if (input?.value)
+    console.log("[main] init start");
+    if (!input) {
+        console.error("[main] input not found at init");
+        return;
+    }
+    input.addEventListener("change", handleChange);
+    input.addEventListener("input", handleChange);
+    if (input.value)
         handleChange();
+    console.log("[main] init done");
 }
 if (document.readyState === "loading") {
+    console.log("[main] waiting DOMContentLoaded");
     document.addEventListener("DOMContentLoaded", init);
 }
 else {
